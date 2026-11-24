@@ -1,0 +1,30 @@
+{
+  "name": "eeyes-pro-mobile",
+  "version": "1.0.0",
+  "description": "EEYES PRO - Cross-Platform Mobile ERP Application for Android & iOS (Integrated with EEYES PRO Desktop)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "cap:sync": "npx @capacitor/cli sync",
+    "cap:android": "npx @capacitor/cli open android",
+    "cap:ios": "npx @capacitor/cli open ios"
+  },
+  "keywords": [
+    "erp",
+    "mobile",
+    "android",
+    "ios",
+    "gst-billing",
+    "accounting",
+    "eeyes-pro",
+    "malayalam",
+    "pwa"
+  ],
+  "author": "E.S TRADING COMPANY",
+  "license": "ISC",
+  "dependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

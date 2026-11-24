@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>EEYES PRO ERP</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
+
+	<!-- iOS Hardware and System Permissions -->
+	<key>NSCameraUsageDescription</key>
+	<string>EEYES PRO uses the camera to scan product barcodes and QR codes for instant billing.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>EEYES PRO requires location access to log salesman field visits and verify customer delivery routes.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>EEYES PRO requires photo library access to upload purchase invoices and receipt documents.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>EEYES PRO saves generated PDF tax invoices to your photo library.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>EEYES PRO uses Face ID / Touch ID to securely authenticate billing access.</string>
+
+	<!-- Local Network Access to connect to local EEYES PRO desktop server -->
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>EEYES PRO connects to your local desktop billing server to sync transactions and inventory.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_http._tcp</string>
+	</array>
+
+	<!-- Allow HTTP connection to local Wi-Fi ERP server -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.estrading.eeyespro</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>eeyespro</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

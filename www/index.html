@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>EEYES PRO - Mobile ERP</title>
+
+  <!-- PWA & Mobile Web Capabilities -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#e11d48">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="EEYES PRO">
+  <link rel="apple-touch-icon" href="icons/icon-192.svg">
+  <link rel="icon" type="image/svg+xml" href="icons/icon-192.svg">
+
+  <!-- Mobile Stylesheet -->
+  <link rel="stylesheet" href="css/mobile.css">
+</head>
+<body>
+
+<div id="mobile-app-root">
+
+  <!-- Mobile Top Header -->
+  <header class="mobile-header">
+    <div class="brand-badge">
+      <img src="icons/icon-192.svg" alt="EEYES PRO" class="brand-icon">
+      <div>
+        <div class="brand-title">EEYES PRO</div>
+        <div class="brand-sub">
+          <span id="header-branch-name">E.S TRADING CO.</span>
+          <span>•</span>
+          <span id="header-role-badge" style="color:#f43f5e; font-weight:700;">PRO</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <!-- Sync Status Pill -->
+      <div id="sync-status-pill" class="sync-pill" onclick="app.openSyncSettings()">
+        <span class="sync-dot"></span>
+        <span id="sync-status-text">Connected</span>
+      </div>
+
+      <!-- Language Toggle Switcher -->
+      <button id="lang-toggle-btn" class="lang-btn" onclick="app.toggleLanguage()">
+        <span id="lang-flag">🌴</span>
+        <span id="lang-code">മലയാളം</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Toast Notifications Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Mobile Scrollable Main Content -->
+  <main class="mobile-content">
+
+    <!-- ========================================== -->
+    <!-- 1. TAB: DASHBOARD (ഡാഷ്‌ബോർഡ്) -->
+    <!-- ========================================== -->
+    <section id="tab-dashboard" class="tab-view active">
+      <!-- Date & Greeting Banner -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div>
+          <div style="font-size:11px; color:var(--text-muted); font-weight:600;" id="txt-welcome-sub">TODAY'S OVERVIEW</div>
+          <div style="font-size:16px; font-weight:800; color:#fff;" id="dash-date-str">Tuesday, 24 Nov 2026</div>
+        </div>
+        <button class="btn btn-secondary" style="padding:6px 12px; font-size:11px; border-radius:8px;" onclick="app.refreshAllData()">
+          🔄 <span id="txt-refresh">Refresh</span>
+        </button>
+      </div>
+
+      <!-- KPI Cards Grid -->
+      <div class="kpi-grid">
+        <div class="kpi-card" style="border-left: 3px solid #10b981;">
+          <div class="kpi-label" id="txt-kpi-sales">TODAY'S SALES</div>
+          <div class="kpi-value" id="kpi-sales-val">₹ 42,850</div>
+          <div class="kpi-sub up">▲ +14.2% <span id="txt-vs-yesterday">vs yesterday</span></div>
+        </div>
+        <div class="kpi-card" style="border-left: 3px solid #3b82f6;">
+          <div class="kpi-label" id="txt-kpi-purchase">INWARD PURCHASES</div>
+          <div class="kpi-value" id="kpi-purchases-val">₹ 18,200</div>
+          <div class="kpi-sub" style="color:#60a5fa;">📦 3 Bills Inward</div>
+        </div>
+        <div class="kpi-card" style="border-left: 3px solid #e11d48;">
+          <div class="kpi-label" id="txt-kpi-receivable">RECEIVABLES (ഉദ്ധാർ)</div>
+          <div class="kpi-value" style="color:#f43f5e;" id="kpi-receivable-val">₹ 68,400</div>
+          <div class="kpi-sub warn">⚠️ 12 Parties Due</div>
+        </div>
+        <div class="kpi-card" style="border-left: 3px solid #f59e0b;">
+          <div class="kpi-label" id="txt-kpi-cash">CASH IN HAND</div>
+          <div class="kpi-value" style="color:#fbbf24;" id="kpi-cash-val">₹ 24,910</div>
+          <div class="kpi-sub" style="color:#94a3b8;">🏦 Bank: ₹ 1,45,200</div>
+        </div>
+      </div>
+
+      <!-- 4 Quick Action Tiles -->
+      <div class="action-grid">
+        <div class="action-tile" onclick="billing.openNewSaleModal()">
+          <div class="action-icon" style="background:rgba(225, 29, 72, 0.2); color:#f43f5e;">⚡</div>
+          <div class="action-label" id="txt-act-newsale">New Sale<br>(ബിൽ)</div>
+        </div>
+        <div class="action-tile" onclick="scanner.openScannerModal('barcode')">
+          <div class="action-icon" style="background:rgba(59, 130, 246, 0.2); color:#60a5fa;">📷</div>
+          <div class="action-label" id="txt-act-scan">Scan Item<br>(സ്കാൻ)</div>
+        </div>
+        <div class="action-tile" onclick="parties.openAddPartyModal()">
+          <div class="action-icon" style="background:rgba(16, 185, 129, 0.2); color:#34d399;">👥</div>
+          <div class="action-label" id="txt-act-addparty">Add Party<br>(കസ്റ്റമർ)</div>
+        </div>
+        <div class="action-tile" onclick="parties.openQuickCollectModal()">
+          <div class="action-icon" style="background:rgba(245, 158, 11, 0.2); color:#fbbf24;">💰</div>
+          <div class="action-label" id="txt-act-collect">Collect Pay<br>(പണം)</div>
+        </div>
+      </div>
+
+      <!-- Low Stock Alerts Card -->
+      <div class="card" id="dash-low-stock-card">
+        <div class="card-title-row">
+          <div class="card-title" style="color:#f87171;">
+            <span>⚠️</span> <span id="txt-low-stock-title">Low Stock Alerts</span>
+          </div>
+          <span class="badge badge-low" id="dash-low-stock-count">3 Items</span>
+        </div>
+        <div id="dash-low-stock-list" class="list-group">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Recent Transactions Card -->
+      <div class="card">
+        <div class="card-title-row">
+          <div class="card-title">
+            <span>🧾</span> <span id="txt-recent-invoices">Recent Invoices</span>
+          </div>
+          <span style="font-size:12px; color:var(--primary); font-weight:700; cursor:pointer;" onclick="app.switchTab('billing')" id="txt-view-all">View All →</span>
+        </div>
+        <div id="dash-recent-list" class="list-group">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 2. TAB: INVOICES & BILLING (ബില്ലിംഗ്) -->
+    <!-- ========================================== -->
+    <section id="tab-billing" class="tab-view">
+      <!-- Search & Scan Bar -->
+      <div class="search-box">
+        <span>🔍</span>
+        <input type="text" id="billing-search-input" class="search-input" placeholder="Search bill no, party name..." oninput="billing.filterInvoices()">
+        <button class="btn btn-secondary" style="padding:4px 8px; font-size:11px; border-radius:6px;" onclick="scanner.openScannerModal('invoice')">
+          📷 Scan
+        </button>
+      </div>
+
+      <!-- Category Filter Chips -->
+      <div class="chip-container">
+        <div class="chip active" onclick="billing.setInvoiceFilter('all', this)" id="chip-inv-all">All Bills</div>
+        <div class="chip" onclick="billing.setInvoiceFilter('sale', this)" id="chip-inv-sale">Sales (സെയിൽസ്)</div>
+        <div class="chip" onclick="billing.setInvoiceFilter('purchase', this)" id="chip-inv-pur">Purchases (പർച്ചേസ്)</div>
+        <div class="chip" onclick="billing.setInvoiceFilter('unpaid', this)" id="chip-inv-unpaid">Unpaid / Udhar</div>
+      </div>
+
+      <!-- Invoices List Container -->
+      <div id="invoices-list-container" class="list-group">
+        <!-- Dynamically rendered -->
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 3. TAB: INVENTORY & STOCK (ഇൻവെന്ററി) -->
+    <!-- ========================================== -->
+    <section id="tab-inventory" class="tab-view">
+      <!-- Search & Barcode Scan -->
+      <div class="search-box">
+        <span>🔍</span>
+        <input type="text" id="inventory-search-input" class="search-input" placeholder="Search items or scan barcode..." oninput="inventory.filterItems()">
+        <button class="btn btn-secondary" style="padding:4px 8px; font-size:11px; border-radius:6px;" onclick="scanner.openScannerModal('item')">
+          📷 Barcode
+        </button>
+      </div>
+
+      <!-- Category Chips -->
+      <div class="chip-container">
+        <div class="chip active" onclick="inventory.setCategoryFilter('all', this)">All Items</div>
+        <div class="chip" onclick="inventory.setCategoryFilter('Grocery', this)">Grocery & Rice</div>
+        <div class="chip" onclick="inventory.setCategoryFilter('Cooking Oils', this)">Cooking Oils</div>
+        <div class="chip" onclick="inventory.setCategoryFilter('Spices', this)">Spices</div>
+        <div class="chip" onclick="inventory.setCategoryFilter('Sacks', this)">Sacks & Bulk</div>
+        <div class="chip" onclick="inventory.setCategoryFilter('Provisions', this)">Provisions</div>
+      </div>
+
+      <!-- Bulk-to-Loose Conversion Card Shortcut -->
+      <div class="card" style="background:linear-gradient(135deg, rgba(225,29,72,0.15) 0%, rgba(15,23,42,0.9) 100%); border-color:rgba(225,29,72,0.3); margin-bottom:12px; cursor:pointer;" onclick="inventory.openBulkConversionModal()">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="font-size:24px;">⚖️</div>
+            <div>
+              <div style="font-size:13px; font-weight:800; color:#fff;" id="txt-bulk-conv-title">Bulk-to-Loose Stock Conversion</div>
+              <div style="font-size:10px; color:var(--text-muted);" id="txt-bulk-conv-sub">Ajwa Rice Sack (50kg) ➔ Loose KGs with Wastage Auto-Recalculation</div>
+            </div>
+          </div>
+          <span style="font-size:16px; color:var(--primary);">➔</span>
+        </div>
+      </div>
+
+      <!-- Items List -->
+      <div id="inventory-list-container" class="list-group">
+        <!-- Dynamically populated -->
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 4. TAB: PARTIES & KHATA (പാർട്ടികൾ / ലെഡ്ജർ) -->
+    <!-- ========================================== -->
+    <section id="tab-parties" class="tab-view">
+      <!-- Search Box -->
+      <div class="search-box">
+        <span>🔍</span>
+        <input type="text" id="parties-search-input" class="search-input" placeholder="Search customer or supplier name/phone..." oninput="parties.filterParties()">
+      </div>
+
+      <!-- Summary Receivables / Payables -->
+      <div class="kpi-grid" style="margin-bottom:12px;">
+        <div class="kpi-card" style="border-left:3px solid #ef4444;">
+          <div class="kpi-label" id="txt-party-rec">TO RECEIVE (ലഭിക്കാനുള്ളത്)</div>
+          <div class="kpi-value" style="color:#f87171;" id="parties-total-rec">₹ 68,400</div>
+          <div class="kpi-sub warn">12 Customers</div>
+        </div>
+        <div class="kpi-card" style="border-left:3px solid #10b981;">
+          <div class="kpi-label" id="txt-party-pay">TO PAY (കൊടുക്കാനുള്ളത്)</div>
+          <div class="kpi-value" style="color:#34d399;" id="parties-total-pay">₹ 31,500</div>
+          <div class="kpi-sub up">4 Suppliers</div>
+        </div>
+      </div>
+
+      <!-- Filter Chips -->
+      <div class="chip-container">
+        <div class="chip active" onclick="parties.setPartyFilter('all', this)">All Parties</div>
+        <div class="chip" onclick="parties.setPartyFilter('customer', this)">Customers (ഉപഭോക്താക്കൾ)</div>
+        <div class="chip" onclick="parties.setPartyFilter('supplier', this)">Suppliers (വിതരണക്കാർ)</div>
+        <div class="chip" onclick="parties.setPartyFilter('due', this)">Due / Udhar Only</div>
+      </div>
+
+      <!-- Parties List Container -->
+      <div id="parties-list-container" class="list-group">
+        <!-- Dynamically populated -->
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 5. TAB: MORE / ERP HUB (കൂടുതൽ ഓപ്ഷനുകൾ) -->
+    <!-- ========================================== -->
+    <section id="tab-more" class="tab-view">
+      <!-- User Profile Card -->
+      <div class="card" style="background:linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="width:48px; height:48px; border-radius:14px; background:#e11d48; display:flex; align-items:center; justify-content:center; font-size:22px; color:#fff; font-weight:800;">
+            ES
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:15px; font-weight:800; color:#fff;">E.S Admin (ADMIN)</div>
+            <div style="font-size:11px; color:#34d399; font-weight:600;">● Active • Full Master Access</div>
+            <div style="font-size:10px; color:var(--text-muted); margin-top:2px;">GST: 32AKLPS9795D1ZK • Thodupuzha HQ</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Extended ERP Modules Grid -->
+      <div style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px; letter-spacing:0.4px;" id="txt-erp-modules">
+        ERP BUSINESS MODULES
+      </div>
+
+      <div class="list-group" style="margin-bottom:16px;">
+        <!-- Salesman Field Tracker -->
+        <div class="list-item" onclick="salesman.openSalesmanTrackerModal()">
+          <div class="item-main">
+            <div class="item-avatar" style="background:rgba(59, 130, 246, 0.2); color:#60a5fa;">🚚</div>
+            <div class="item-details">
+              <div class="item-title" id="txt-mod-salesman">Salesman Field Tracker</div>
+              <div class="item-sub" id="txt-mod-salesman-sub">GPS check-ins, customer routes & on-field billing</div>
+            </div>
+          </div>
+          <div class="item-right">
+            <span class="badge badge-stock">Active</span>
+          </div>
+        </div>
+
+        <!-- Cash & Bank Daybook -->
+        <div class="list-item" onclick="app.openDaybookModal()">
+          <div class="item-main">
+            <div class="item-avatar" style="background:rgba(16, 185, 129, 0.2); color:#34d399;">💰</div>
+            <div class="item-details">
+              <div class="item-title" id="txt-mod-daybook">Daily Cash & Bank Register</div>
+              <div class="item-sub" id="txt-mod-daybook-sub">Inflows, outflows, petty cash & bank reconcile</div>
+            </div>
+          </div>
+          <div class="item-right">
+            <span class="item-amount" style="font-size:12px; color:#34d399;">₹ 1,70,110</span>
+          </div>
+        </div>
+
+        <!-- Smart Rewards & Customer Wallet -->
+        <div class="list-item" onclick="app.openSmartRewardsModal()">
+          <div class="item-main">
+            <div class="item-avatar" style="background:rgba(245, 158, 11, 0.2); color:#fbbf24;">🎁</div>
+            <div class="item-details">
+              <div class="item-title" id="txt-mod-rewards">Smart Rewards & Rulebook</div>
+              <div class="item-sub" id="txt-mod-rewards-sub">Customer loyalty wallet & profit ratio discounts</div>
+            </div>
+          </div>
+          <div class="item-right">
+            <span class="badge" style="background:rgba(245, 158, 11, 0.2); color:#fbbf24;">Min 10%</span>
+          </div>
+        </div>
+
+        <!-- AI Co-Pilot Commodity Trends -->
+        <div class="list-item" onclick="app.openAiCopilotModal()">
+          <div class="item-main">
+            <div class="item-avatar" style="background:rgba(225, 29, 72, 0.2); color:#f43f5e;">📈</div>
+            <div class="item-details">
+              <div class="item-title" id="txt-mod-copilot">AI Commodity Price Forecast</div>
+              <div class="item-sub" id="txt-mod-copilot-sub">Rice, edible oil & provisions wholesale trends</div>
+            </div>
+          </div>
+          <div class="item-right">
+            <span class="badge" style="background:rgba(225, 29, 72, 0.2); color:#f43f5e;">Live AI</span>
+          </div>
+        </div>
+
+        <!-- HR & Staff Attendance -->
+        <div class="list-item" onclick="app.openHrModal()">
+          <div class="item-main">
+            <div class="item-avatar" style="background:rgba(168, 85, 247, 0.2); color:#c084fc;">👥</div>
+            <div class="item-details">
+              <div class="item-title" id="txt-mod-hr">HR & Staff Payroll</div>
+              <div class="item-sub" id="txt-mod-hr-sub">Staff attendance, salary advances & loans</div>
+            </div>
+          </div>
+          <div class="item-right">
+            <span class="badge" style="background:rgba(168, 85, 247, 0.2); color:#c084fc;">4 Staff</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- System & Connection Settings -->
+      <div style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px; letter-spacing:0.4px;" id="txt-sys-settings">
+        SETTINGS & SYNC
+      </div>
+
+      <div class="list-group">
+        <div class="list-item" onclick="app.openSyncSettings()">
+          <div class="item-main">
+            <div class="item-avatar" style="background:rgba(14, 165, 233, 0.2); color:#38bdf8;">🔄</div>
+            <div class="item-details">
+              <div class="item-title" id="txt-mod-sync">Desktop ERP Server Link</div>
+              <div class="item-sub" id="txt-mod-sync-sub">Sync with http://localhost:3000 or local Wi-Fi</div>
+            </div>
+          </div>
+          <div class="item-right">
+            <span style="font-size:16px; color:var(--text-dim);">⚙️</span>
+          </div>
+        </div>
+
+        <div class="list-item" onclick="app.backupLocalData()">
+          <div class="item-main">
+            <div class="item-avatar" style="background:rgba(34, 197, 94, 0.2); color:#4ade80;">💾</div>
+            <div class="item-details">
+              <div class="item-title" id="txt-mod-backup">Backup Mobile Database</div>
+              <div class="item-sub" id="txt-mod-backup-sub">Save local backup JSON file to device storage</div>
+            </div>
+          </div>
+          <div class="item-right">
+            <span style="font-size:16px; color:var(--text-dim);">📥</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Floating Action Button (Quick New Bill) -->
+  <button id="main-fab-btn" class="fab-btn" onclick="billing.openNewSaleModal()" title="New Quick Bill">
+    ＋
+  </button>
+
+  <!-- Mobile Bottom Tab Navigation -->
+  <nav class="bottom-nav">
+    <div class="nav-item active" onclick="app.switchTab('dashboard')" id="nav-btn-dashboard">
+      <div class="nav-indicator"></div>
+      <div class="nav-icon">📊</div>
+      <div class="nav-label" id="lbl-nav-dash">Home</div>
+    </div>
+    <div class="nav-item" onclick="app.switchTab('billing')" id="nav-btn-billing">
+      <div class="nav-indicator"></div>
+      <div class="nav-icon">🧾</div>
+      <div class="nav-label" id="lbl-nav-bill">Billing</div>
+    </div>
+    <div class="nav-item" onclick="app.switchTab('inventory')" id="nav-btn-inventory">
+      <div class="nav-indicator"></div>
+      <div class="nav-icon">📦</div>
+      <div class="nav-label" id="lbl-nav-stock">Stock</div>
+    </div>
+    <div class="nav-item" onclick="app.switchTab('parties')" id="nav-btn-parties">
+      <div class="nav-indicator"></div>
+      <div class="nav-icon">👥</div>
+      <div class="nav-label" id="lbl-nav-party">Khata</div>
+    </div>
+    <div class="nav-item" onclick="app.switchTab('more')" id="nav-btn-more">
+      <div class="nav-indicator"></div>
+      <div class="nav-icon">⚡</div>
+      <div class="nav-label" id="lbl-nav-more">More</div>
+    </div>
+  </nav>
+
+</div>
+
+<!-- ======================================================== -->
+<!-- MODAL: NEW SALE / QUICK POS BILL (പുതിയ സെയിൽ ബിൽ) -->
+<!-- ======================================================== -->
+<div id="modal-new-sale" class="modal-overlay">
+  <div class="modal-sheet">
+    <div class="modal-handle-bar"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="txt-modal-sale-title">⚡ New Sales Bill (സെയിൽസ് ബിൽ)</div>
+      <button class="modal-close-btn" onclick="billing.closeNewSaleModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- Party Selector -->
+      <div class="form-group">
+        <label class="form-label" id="lbl-select-customer">Select Customer (പാർട്ടി)</label>
+        <select id="sale-party-select" class="form-control" onchange="billing.onPartySelected()">
+          <!-- Populated from Parties -->
+        </select>
+        <div id="sale-party-balance-pill" style="font-size:11px; color:#fbbf24; margin-top:4px; font-weight:600;">
+          Current Khata: ₹ 0.00
+        </div>
+      </div>
+
+      <!-- Add Item Row -->
+      <div class="form-group">
+        <label class="form-label" id="lbl-add-item">Add Product (ഉൽപ്പന്നം ചേർക്കുക)</label>
+        <div style="display:flex; gap:8px;">
+          <select id="sale-item-select" class="form-control" style="flex:1;">
+            <!-- Populated from items -->
+          </select>
+          <button class="btn btn-secondary" style="padding:8px 12px;" onclick="scanner.openScannerModal('sale_item')">
+            📷
+          </button>
+          <button class="btn btn-primary" style="padding:8px 14px; flex:none;" onclick="billing.addItemToCart()">
+            + Add
+          </button>
+        </div>
+      </div>
+
+      <!-- Cart Items Table / List -->
+      <div style="margin-bottom:12px;">
+        <label class="form-label" id="lbl-cart-items">Bill Items (<span id="cart-item-count">0</span>)</label>
+        <div id="sale-cart-list" class="list-group" style="gap:6px; min-height:80px; max-height:220px; overflow-y:auto;">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Bill Totals Breakdown -->
+      <div class="card" style="background:#162032; margin-bottom:12px; padding:12px;">
+        <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted); margin-bottom:4px;">
+          <span id="lbl-taxable-amt">Taxable Value:</span>
+          <span id="sale-taxable-val">₹ 0.00</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted); margin-bottom:4px;">
+          <span id="lbl-gst-amt">Total GST (5% / 12% / 18%):</span>
+          <span id="sale-gst-val">₹ 0.00</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:16px; font-weight:800; color:#fff; border-top:1px solid #334155; padding-top:6px; margin-top:4px;">
+          <span id="lbl-grand-total">Grand Total:</span>
+          <span id="sale-grand-total" style="color:#34d399;">₹ 0.00</span>
+        </div>
+      </div>
+
+      <!-- Payment Mode -->
+      <div class="form-group">
+        <label class="form-label" id="lbl-pay-mode">Payment Mode (പേയ്മെന്റ് രീതി)</label>
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;">
+          <button type="button" class="btn btn-secondary sale-pay-btn active" onclick="billing.setPaymentMode('CASH', this)">💵 Cash</button>
+          <button type="button" class="btn btn-secondary sale-pay-btn" onclick="billing.setPaymentMode('UPI', this)">📱 UPI</button>
+          <button type="button" class="btn btn-secondary sale-pay-btn" onclick="billing.setPaymentMode('CREDIT', this)">📝 Udhar</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="billing.closeNewSaleModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="billing.saveAndPrintSale()">
+        ✓ Save & Generate Bill
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- MODAL: INSTANT UPI QR & DIRECT APP LAUNCH -->
+<!-- ======================================================== -->
+<div id="modal-upi-qr" class="modal-overlay">
+  <div class="modal-sheet">
+    <div class="modal-handle-bar"></div>
+    <div class="modal-header">
+      <div class="modal-title">📱 Instant UPI Payment</div>
+      <button class="modal-close-btn" onclick="upi.closeUpiModal()">✕</button>
+    </div>
+    <div class="modal-body" style="text-align:center;">
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Scan with any UPI App or tap below</div>
+      
+      <!-- QR Code Canvas Display -->
+      <div style="background:#fff; padding:16px; border-radius:16px; display:inline-block; margin-bottom:12px;">
+        <canvas id="upi-qr-canvas" width="200" height="200"></canvas>
+      </div>
+
+      <div style="font-size:24px; font-weight:800; color:#34d399; margin-bottom:4px;" id="upi-display-amount">₹ 0.00</div>
+      <div style="font-size:11px; color:var(--text-muted); margin-bottom:16px;">Payee: E.S TRADING COMPANY (estrading@sbi)</div>
+
+      <!-- Direct UPI App Launchers for Android & iOS -->
+      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-bottom:12px;">
+        <button class="btn btn-secondary" style="font-size:12px; padding:10px 4px;" onclick="upi.launchUpiIntent('gpay')">
+          🟢 GPay
+        </button>
+        <button class="btn btn-secondary" style="font-size:12px; padding:10px 4px;" onclick="upi.launchUpiIntent('phonepe')">
+          🟣 PhonePe
+        </button>
+        <button class="btn btn-secondary" style="font-size:12px; padding:10px 4px;" onclick="upi.launchUpiIntent('paytm')">
+          🔵 Paytm
+        </button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="upi.closeUpiModal()">Cancel</button>
+      <button class="btn btn-success" onclick="upi.markAsReceived()">
+        ✓ Payment Received
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- MODAL: CAMERA BARCODE SCANNER (സ്കാനർ) -->
+<!-- ======================================================== -->
+<div id="modal-scanner" class="modal-overlay">
+  <div class="modal-sheet">
+    <div class="modal-handle-bar"></div>
+    <div class="modal-header">
+      <div class="modal-title">📷 Barcode / QR Scanner</div>
+      <button class="modal-close-btn" onclick="scanner.closeScannerModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- Camera Viewport -->
+      <div class="scanner-container">
+        <video id="scanner-video" class="scanner-video" autoplay playsinline muted></video>
+        <div class="scanner-reticle">
+          <div class="scanner-laser"></div>
+        </div>
+      </div>
+      <div style="text-align:center; font-size:12px; color:var(--text-muted); margin-bottom:12px;">
+        Point camera at product barcode or receipt QR code
+      </div>
+
+      <!-- Manual Barcode Entry Fallback -->
+      <div style="display:flex; gap:8px;">
+        <input type="text" id="manual-barcode-input" class="form-control" placeholder="Enter barcode manually (e.g. 261113-01)">
+        <button class="btn btn-primary" onclick="scanner.submitManualBarcode()">OK</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" style="width:100%;" onclick="scanner.closeScannerModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- MODAL: PARTY KHATA LEDGER STATEMENT -->
+<!-- ======================================================== -->
+<div id="modal-party-ledger" class="modal-overlay">
+  <div class="modal-sheet">
+    <div class="modal-handle-bar"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="ledger-party-name">Party Statement (ഖാത)</div>
+      <button class="modal-close-btn" onclick="parties.closeLedgerModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- Party KPI Header -->
+      <div class="card" style="background:#1e293b; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-size:11px; color:var(--text-muted);" id="lbl-balance-due">BALANCE DUE</div>
+            <div style="font-size:22px; font-weight:800; color:#f87171;" id="ledger-balance-val">₹ 0.00</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:2px;" id="ledger-phone-val">📱 9876543210</div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <button class="btn btn-whatsapp" style="padding:6px 10px; font-size:11px;" onclick="parties.sendWhatsAppReminder()">
+              💬 WhatsApp
+            </button>
+            <button class="btn btn-secondary" style="padding:6px 10px; font-size:11px;" onclick="parties.callParty()">
+              📞 Call
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ledger Transactions Timeline -->
+      <div style="font-size:12px; font-weight:700; color:var(--text-muted); margin-bottom:8px;">
+        TRANSACTION HISTORY
+      </div>
+      <div id="ledger-entries-list" class="list-group">
+        <!-- Dynamically loaded entries -->
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="parties.closeLedgerModal()">Close</button>
+      <button class="btn btn-success" onclick="parties.openRecordPaymentModal()">
+        + Record Payment
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- MODAL: BULK-TO-LOOSE STOCK CONVERSION -->
+<!-- ======================================================== -->
+<div id="modal-bulk-conversion" class="modal-overlay">
+  <div class="modal-sheet">
+    <div class="modal-handle-bar"></div>
+    <div class="modal-header">
+      <div class="modal-title">⚖️ Bulk-to-Loose Stock Conversion</div>
+      <button class="modal-close-btn" onclick="inventory.closeBulkConversionModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Parent Bulk Item (Sack / Bag)</label>
+        <select id="conv-parent-select" class="form-control" onchange="inventory.onBulkParentChanged()">
+          <option value="item-sack-1">Ajwa Rice - 50kg Sack (Stock: 25 Sacks • ₹2,500/sack)</option>
+          <option value="item-sack-2">Jaya Rice - 50kg Sack (Stock: 40 Sacks • ₹2,200/sack)</option>
+          <option value="item-sack-3">Matta Rice - 50kg Sack (Stock: 18 Sacks • ₹2,350/sack)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Child Loose Item</label>
+        <input type="text" id="conv-child-name" class="form-control" value="Ajwa Rice - Loose (KG)" readonly>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Actual Measured Usable Weight (KG)</label>
+        <input type="number" id="conv-measured-weight" class="form-control" value="49.2" step="0.1" oninput="inventory.calcConversionKPIs()">
+      </div>
+
+      <!-- Real-time Conversion KPIs -->
+      <div class="card" style="background:#162032;">
+        <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+          <span>Nominal Expected Weight:</span>
+          <span style="font-weight:700;">50.00 KG</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+          <span>Actual Usable Weight:</span>
+          <span style="font-weight:700; color:#34d399;" id="conv-kpi-usable">49.20 KG</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; color:#f87171;">
+          <span>Natural Wastage Loss:</span>
+          <span style="font-weight:700;" id="conv-kpi-loss">0.80 KG (800g • 1.6%)</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; margin-top:6px; border-top:1px solid #334155; padding-top:6px; color:#fbbf24;">
+          <span>True Recalculated Cost:</span>
+          <span style="font-weight:800;" id="conv-kpi-cost">₹ 50.81 / KG</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="inventory.closeBulkConversionModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="inventory.processStockConversion()">
+        ⚙️ Process Conversion & Update Stock
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- MODAL: SERVER SYNC & NETWORK SETTINGS -->
+<!-- ======================================================== -->
+<div id="modal-sync-settings" class="modal-overlay">
+  <div class="modal-sheet">
+    <div class="modal-handle-bar"></div>
+    <div class="modal-header">
+      <div class="modal-title">🔄 ERP Server Link & Sync</div>
+      <button class="modal-close-btn" onclick="app.closeSyncSettings()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">EEYES PRO Desktop Server Address</label>
+        <input type="text" id="sync-server-url" class="form-control" placeholder="http://192.168.1.100:3000">
+        <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">
+          Enter the IP address of your Windows PC running EEYES PRO (or leave default for local preview).
+        </div>
+      </div>
+
+      <div style="display:flex; gap:8px; margin-bottom:16px;">
+        <button class="btn btn-secondary" style="flex:1;" onclick="api.testServerConnection()">
+          📡 Test Connection
+        </button>
+        <button class="btn btn-primary" style="flex:1;" onclick="api.syncNow()">
+          🔄 Sync Now
+        </button>
+      </div>
+
+      <div class="card" style="background:#162032;">
+        <div style="font-size:12px; font-weight:700; color:#fff; margin-bottom:6px;">Offline Resilience</div>
+        <div style="font-size:11px; color:var(--text-muted);">
+          When away from the store Wi-Fi, all bills, collections, and stock changes are saved in phone memory and will auto-sync when you reconnect.
+        </div>
+        <div style="margin-top:8px; font-size:11px; color:#34d399; font-weight:700;" id="sync-pending-count-str">
+          ● All local data synchronized
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" style="width:100%;" onclick="app.closeSyncSettings()">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="js/i18n.js"></script>
+<script src="js/db.js"></script>
+<script src="js/api.js"></script>
+<script src="js/upi.js"></script>
+<script src="js/scanner.js"></script>
+<script src="js/billing.js"></script>
+<script src="js/parties.js"></script>
+<script src="js/inventory.js"></script>
+<script src="js/salesman.js"></script>
+<script src="js/app.js"></script>
+
+<script>
+  // Register Service Worker for Offline PWA Capabilities
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').then((reg) => {
+        console.log('[PWA] ServiceWorker registered successfully:', reg.scope);
+      }).catch((err) => {
+        console.warn('[PWA] ServiceWorker registration failed:', err);
+      });
+    });
+  }
+</script>
+
+</body>
+</html>

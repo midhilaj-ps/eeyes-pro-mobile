@@ -1,0 +1,48 @@
+{
+  "name": "EEYES PRO - AI GST Billing & Accounting",
+  "short_name": "EEYES PRO",
+  "description": "Complete Mobile ERP for E.S TRADING COMPANY - Billing, Khata, Inventory & UPI",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#090d16",
+  "theme_color": "#e11d48",
+  "categories": ["business", "finance", "productivity"],
+  "icons": [
+    {
+      "src": "icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "New Sale (പുതിയ സെയിൽ)",
+      "short_name": "New Sale",
+      "description": "Quick Mobile POS Bill",
+      "url": "./index.html?action=new_sale",
+      "icons": [{ "src": "icons/icon-192.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Parties Khata (ലെഡ്ജർ)",
+      "short_name": "Khata",
+      "description": "Customer Outstanding & Balances",
+      "url": "./index.html?action=parties",
+      "icons": [{ "src": "icons/icon-192.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Stock & Items (സ്റ്റോക്ക്)",
+      "short_name": "Stock",
+      "description": "Inventory Stock Status",
+      "url": "./index.html?action=inventory",
+      "icons": [{ "src": "icons/icon-192.svg", "sizes": "192x192" }]
+    }
+  ]
+}
