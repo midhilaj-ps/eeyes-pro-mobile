@@ -84,16 +84,9 @@ class MobileAPI {
       this.eventSource.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          console.log('[API] Real-time event received from desktop ERP:', data);
-
+          // Silent real-time sync with debounced background refresh (no spammy toasts)
           if (data.type === 'PARTY_SYNC' || data.type === 'CUSTOMER_REGISTERED' || data.type === 'CONNECTED') {
-            // Instantly re-fetch and refresh mobile UI
-            db.loadFromSharedDatabase().then(() => {
-              if (window.app) app.refreshAllData();
-              if (data.party && data.party.name) {
-                app.showToast(`⚡ Real-Time Sync: Customer "${data.party.name}" updated!`, 'success');
-              }
-            });
+            this.scheduleSilentRefresh();
           }
         } catch (err) {
           console.warn('[API] SSE parse error:', err);
@@ -106,6 +99,20 @@ class MobileAPI {
     } catch (err) {
       console.warn('[API] Failed to initialize EventSource:', err);
     }
+  }
+
+  // Debounced silent background sync (prevents network storm and UI stutter)
+  scheduleSilentRefresh() {
+    if (this._syncTimer) clearTimeout(this._syncTimer);
+    this._syncTimer = setTimeout(async () => {
+      await db.loadFromSharedDatabase();
+      if (window.app) app.refreshAllData();
+      const pill = document.getElementById('sync-status-pill');
+      if (pill) {
+        pill.style.borderColor = '#10b981';
+        setTimeout(() => { if (pill) pill.style.borderColor = ''; }, 1200);
+      }
+    }, 400);
   }
 
   async get(endpoint) {

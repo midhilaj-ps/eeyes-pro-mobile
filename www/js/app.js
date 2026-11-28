@@ -195,6 +195,9 @@ class MobileApp {
     const container = document.getElementById('toast-container');
     if (!container) return;
 
+    // Prevent duplicate cascades: keep at most one clean notification on screen
+    container.innerHTML = '';
+
     const toast = document.createElement('div');
     toast.className = 'toast';
 
@@ -206,12 +209,13 @@ class MobileApp {
     toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
     container.appendChild(toast);
 
-    setTimeout(() => {
+    if (this._toastTimer) clearTimeout(this._toastTimer);
+    this._toastTimer = setTimeout(() => {
       toast.style.opacity = '0';
       toast.style.transform = 'translateY(-10px)';
       toast.style.transition = 'all 0.25s ease-out';
       setTimeout(() => toast.remove(), 250);
-    }, 2800);
+    }, 2500);
   }
 
   initTouchListeners() {
