@@ -1,20 +1,10 @@
 // EEYES PRO Mobile Service Worker - Offline Cache & Sync
-const CACHE_NAME = 'eeyes-pro-mobile-v1.0.0';
+const CACHE_NAME = 'eeyes-pro-mobile-v2.1.0';
 const STATIC_ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './css/mobile.css',
-  './js/app.js',
-  './js/api.js',
-  './js/db.js',
-  './js/i18n.js',
-  './js/billing.js',
-  './js/parties.js',
-  './js/inventory.js',
-  './js/upi.js',
-  './js/scanner.js',
-  './js/salesman.js',
   './icons/icon-192.svg',
   './icons/icon-512.svg'
 ];
@@ -24,7 +14,7 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME).then((cache) => {
       console.log('[ServiceWorker] Pre-caching offline mobile shell');
       return cache.addAll(STATIC_ASSETS).catch((err) => {
-        console.warn('[ServiceWorker] Some assets could not be cached immediately:', err);
+        console.warn('[ServiceWorker] Pre-cache notice:', err);
       });
     })
   );
@@ -37,7 +27,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         keyList.map((key) => {
           if (key !== CACHE_NAME) {
-            console.log('[ServiceWorker] Removing obsolete cache:', key);
+            console.log('[ServiceWorker] Clearing obsolete cache:', key);
             return caches.delete(key);
           }
         })
@@ -50,7 +40,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // For API calls, try Network first, then fallback to local IndexedDB/offline message
+  // For API calls, always Network First, fallback to offline response
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
       fetch(event.request).catch(() => {
@@ -63,14 +53,35 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // For static assets, Cache first, then Network
+  // For JS, CSS, and HTML: Always Network First, update cache, fallback to cache if offline
+  if (
+    url.pathname.endsWith('.js') ||
+    url.pathname.endsWith('.css') ||
+    url.pathname.endsWith('.html') ||
+    url.pathname === '/' ||
+    url.pathname === '/mobile/'
+  ) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response.status === 200 && event.request.method === 'GET' && url.origin === location.origin) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // For other static assets (images, fonts, icons): Cache first, fallback to network
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
         return cachedResponse;
       }
       return fetch(event.request).then((response) => {
-        // Cache newly requested local assets
         if (response.status === 200 && event.request.method === 'GET' && url.origin === location.origin) {
           const responseClone = response.clone();
           caches.open(CACHE_NAME).then((cache) => {

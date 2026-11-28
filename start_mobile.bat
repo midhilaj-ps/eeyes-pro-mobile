@@ -7,17 +7,12 @@ echo   EEYES PRO - Mobile Application Server for Android & iOS
 echo ==============================================================
 echo Starting local mobile server on Port 3001...
 
-start "" /B cmd /c "%APPDATA%\Antigravity\bin\agy-node.cmd" mobile_server.js
+set ELECTRON_RUN_AS_NODE=1
+set MOBILE_PORT=3001
 
-timeout /t 2 /nobreak >nul
+:: Automatically open browser preview after 2 seconds in background
+start /min cmd /c "timeout /t 2 /nobreak >nul && start http://localhost:3001"
 
-echo Server is now active!
-echo Opening Mobile Preview in your browser...
-start "" "http://localhost:3001"
-
-echo --------------------------------------------------------------
-echo Mobile Preview: http://localhost:3001
-echo Alternative:    http://localhost:3000/mobile/
-echo --------------------------------------------------------------
-echo Keep this window open while using the mobile app.
+:: Start Node server directly in this window
+"%APPDATA%\Antigravity\bin\agy-node.cmd" "%~dp0mobile_server.js"
 pause
